@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#11151a">
+  <title>Strata Request Monitor</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="rail">
+      <div class="brand-mark">S</div>
+      <button class="rail-button active" id="requests-home" title="Requests" aria-label="Requests">▤</button>
+      <button class="rail-button" id="settings-open" title="Settings" aria-label="Settings">⚙</button>
+      <div class="rail-spacer"></div>
+      <div class="rail-foot">STRATA<br><span>DEBUG</span></div>
+    </aside>
+    <aside class="request-sidebar">
+      <header class="sidebar-head">
+        <div class="eyebrow">INFERENCE TRACE</div>
+        <div class="title-row"><h1>Requests</h1><button class="icon-button" id="refresh" title="Refresh requests" aria-label="Refresh">↻</button></div>
+        <div class="source-row"><span class="live-dot" id="connection-dot"></span><span id="source-label">Connecting…</span></div>
+      </header>
+      <div class="search-wrap"><span>⌕</span><input id="search" type="search" placeholder="Search model, endpoint, ID…" autocomplete="off"></div>
+      <div class="filter-row"><button class="filter-chip selected" data-filter="all">All <b id="count-all">0</b></button><button class="filter-chip" data-filter="completed">Completed <b id="count-completed">0</b></button><button class="filter-chip" data-filter="issues">Issues <b id="count-issues">0</b></button></div>
+      <div id="request-list" class="request-list"></div>
+      <footer class="sidebar-footer"><span id="list-footnote">—</span><span>Auto refresh <button class="toggle on" id="autorefresh" aria-label="Toggle auto refresh"><i></i></button></span></footer>
+    </aside>
+    <main id="main-panel" class="main-panel">
+      <div id="welcome" class="welcome-state"><div class="welcome-icon">⌁</div><h2>Select a request</h2><p>Choose a trace to inspect its full prompt, model response, reasoning, and runtime timings.</p><button id="welcome-settings" class="button subtle">Configure connection</button></div>
+      <div id="detail-view" class="detail-view hidden">
+        <header class="detail-header">
+          <div class="crumb"><span>REQUESTS</span><span class="crumb-slash">/</span><span id="detail-id-short">—</span></div>
+          <div class="detail-title-row"><div><h2 id="detail-title">Request</h2><div class="detail-subtitle" id="detail-subtitle"></div></div><div class="detail-actions"><button id="copy-request" class="button subtle">Copy Request</button><button id="copy-id" class="button subtle">Copy ID</button></div></div>
+          <div class="meta-strip" id="meta-strip"></div>
+        </header>
+        <section class="metric-grid" id="metric-grid"></section>
+        <section class="payload-section request-section">
+          <div class="section-heading"><div><div class="eyebrow">REQUEST</div><h3>Input sent to the model</h3></div></div>
+          <div class="payload-subheading"><span>Messages</span><span class="payload-hint">Parsed by role and content</span></div>
+          <div id="request-messages" class="request-messages"></div>
+          <div class="payload-card input-metadata"><div class="payload-card-head"><span>Input metadata JSON</span><span class="payload-hint">Messages shown above</span></div><pre id="request-json" class="payload-json"></pre></div>
+          <div class="payload-subheading request-summary-heading">Request metadata</div>
+          <div id="request-envelope" class="request-envelope"></div>
+        </section>
+        <section class="payload-section response-section">
+          <div class="section-heading"><div><div class="eyebrow">RESPONSE</div><h3>Model output and runtime result</h3></div></div>
+          <div id="response-output" class="response-content"></div>
+          <div id="response-reasoning" class="response-content reasoning-content"></div>
+          <div id="response-fields" class="response-fields"></div>
+        </section>
+        <details class="raw-api-details"><summary>Raw API response</summary><pre id="raw-api-response"></pre></details>
+      </div>
+    </main>
+  </div>
+
+  <dialog id="settings-dialog" class="settings-dialog">
+    <form method="dialog" id="settings-form">
+      <div class="dialog-top"><div><div class="eyebrow">CONNECTION</div><h2>Monitor settings</h2></div><button class="icon-button" value="cancel" aria-label="Close">×</button></div>
+      <label class="field-label" for="base-url">Strata base URL</label><input id="base-url" class="field-input" type="url" value="http://127.0.0.1:8080" required>
+      <p class="help-text">Use the Strata server address. The monitor reads <code>/api/requests</code> from this base URL.</p>
+      <label class="field-label" for="api-key">API key <span>optional</span></label><input id="api-key" class="field-input" type="password" placeholder="Leave blank if not required" autocomplete="off">
+      <label class="field-label" for="key-mode">API key header</label><select id="key-mode" class="field-input"><option value="x-api-key">X-API-Key</option><option value="bearer">Authorization: Bearer</option></select>
+      <div class="dialog-actions"><button id="settings-cancel" class="button subtle" value="cancel">Cancel</button><button id="settings-save" class="button primary" value="default">Save settings</button></div>
+    </form>
+  </dialog>
+  <div id="toast" class="toast" role="status"></div>
+  <script src="/app.js" defer></script>
+</body>
+</html>
